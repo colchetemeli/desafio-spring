@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/users")
 public class UserController implements IUserController {
 
-    private IUserService userService;
+    private final IUserService userService;
 
     @Autowired
     public UserController(IUserService userService) {
@@ -42,14 +42,14 @@ public class UserController implements IUserController {
     //US 0003
     @Override
     @GetMapping("/{userId}/followers/list")
-    public UserFollowersDTO getFollowers(@PathVariable int userId, @RequestParam(required = false) String order) {
+    public UserFollowersDTO getFollowers(@PathVariable int userId, @RequestParam(defaultValue = "") String order) {
         return userService.getFollowers(userId, order);
     }
 
     //US 0004
     @Override
     @GetMapping("/{userId}/followed/list")
-    public UserFollowedDTO getFollowed(@PathVariable int userId, @RequestParam(required = false) String order) {
+    public UserFollowedDTO getFollowed(@PathVariable int userId, @RequestParam(defaultValue = "") String order) {
         return userService.getFollowed(userId, order);
     }
 }
