@@ -10,7 +10,7 @@ public interface IPostRepository {
     void persistPost(Post post);
     List<Post> fetchPostsByUser(int userId);
     int countPromoByUser(int userId);
-    UserPromosDTO fetchPromosByUser(int userId);
+    List<Post> fetchPromosByUser(int userId);
     List<Post> fetchPromoByUser(int userId);
 
 }
