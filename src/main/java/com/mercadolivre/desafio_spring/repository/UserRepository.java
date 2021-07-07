@@ -11,7 +11,6 @@ import java.util.List;
 
 public class UserRepository implements IUserRepository {
 
-    @Autowired
     private ObjectMapper mapper = new ObjectMapper();
 
     private static final File FILE = new File("src/main/resources/repository/users.json");
