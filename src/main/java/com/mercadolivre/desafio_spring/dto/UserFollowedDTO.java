@@ -1,4 +1,15 @@
 package com.mercadolivre.desafio_spring.dto;
 
-public class UserFollowedDTO {
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class UserFollowedDTO extends UserDTO{
+    private List<UserDTO> followed = new ArrayList<>();
 }

@@ -8,7 +8,12 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserPromosCountedDTO extends UserDTO{
-    @JsonProperty("promoproducts_count")
-    private int promoProducts;
+public class ProductDTO {
+    @JsonProperty("product_id")
+    private int id;
+    private String productName;
+    private String type;
+    private String brand;
+    private String color;
+    private String notes;
 }
