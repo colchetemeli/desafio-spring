@@ -13,9 +13,13 @@ import java.util.List;
 @Repository
 public class PostRepository implements IPostRepository{
 
-    private static final File FILE = new File("src/main/resources/posts.json");
-    @Autowired
+    private static final File FILE = new File("src/main/resources/repository/posts.json");
     private ObjectMapper mapper;
+
+    @Autowired
+    public PostRepository(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     @Override
     public void persistPost(Post post) {
