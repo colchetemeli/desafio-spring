@@ -8,11 +8,10 @@ import com.mercadolivre.desafio_spring.entity.User;
 import com.mercadolivre.desafio_spring.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserService {
@@ -88,12 +87,9 @@ public class UserService implements IUserService {
     }
 
     private List<UserDTO> getAllUsers(List<Integer> followersIds) {
-        List<UserDTO> followersDTO = new ArrayList<>();
-        for (Integer followerId : followersIds) {
-            User follower = userRepository.fetchById(followerId);
-            followersDTO.add(new UserDTO(follower.getId(), follower.getName()));
-        }
-
-        return followersDTO;
+        return followersIds.stream()
+                .map(userRepository::fetchById)
+                .map(follower -> new UserDTO(follower.getId(), follower.getName()))
+                .collect(Collectors.toList());
     }
 }
