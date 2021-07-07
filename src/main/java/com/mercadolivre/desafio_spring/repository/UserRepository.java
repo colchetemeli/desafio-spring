@@ -5,24 +5,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mercadolivre.desafio_spring.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.swing.text.html.Option;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class UserRepository implements IUserRepository {
 
     @Autowired
-    private ObjectMapper mapper;
+    private ObjectMapper mapper = new ObjectMapper();
+
+    private static final File FILE = new File("src/main/resources/repository/users.json");
 
     @Override
     public User fetchById(int userId) {
 
         try {
-            for (User user : this.getList() ) {
+            for (User user : this.getUsers() ) {
                 if(user.getId() == userId){
                     return user;
                 }
@@ -36,20 +34,42 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public User update(int userId, User user) {
-        return null;
+        List<User> users = getUsers();
+
+        if (users.removeIf(user1 ->  user1.getId() == userId)) {
+
+            users.add(user);
+
+            try {
+
+                PrintWriter buffer = new PrintWriter(new BufferedWriter(new FileWriter(FILE)));
+
+                buffer.flush();
+
+                mapper.writeValue(buffer, users);
+
+                buffer.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        return user;
     }
 
 
-    private List<User> getList(){
-        List<User> posts = new ArrayList<>();
+    private List<User> getUsers(){
+        List<User> users = new ArrayList<>();
         try {
-            FileInputStream is = new FileInputStream(new File("src/main/resources/users.json"));
+            FileInputStream is = new FileInputStream(FILE);
             TypeReference<List<User>> typeReference = new TypeReference<List<User>>() {};
-            posts = mapper.readValue(is, typeReference);
+            users = mapper.readValue(is, typeReference);
             is.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return posts;
+        return users;
     }
 }
