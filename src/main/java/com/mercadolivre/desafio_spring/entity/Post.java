@@ -1,6 +1,7 @@
 package com.mercadolivre.desafio_spring.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mercadolivre.desafio_spring.dto.PostDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,4 +25,13 @@ public class Post {
     private boolean hasPromo;
     private double discount;
 
+    public PostDTO toPostDTO() {
+        return new PostDTO()
+                .setUserId(this.userId)
+                .setId(this.id)
+                .setDate(this.date)
+                .setDetail(this.detail)
+                .setCategory(this.category)
+                .setPrice(this.price);
+    }
 }
