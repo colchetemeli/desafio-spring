@@ -22,18 +22,18 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public void follow(int userId, int userIdtoFollow) {
+    public void follow(int userId, int userIdToFollow) {
         User userFollowing = userRepository.fetchById(userId);
-        User userToFollow = userRepository.fetchById(userIdtoFollow);
+        User userToFollow = userRepository.fetchById(userIdToFollow);
 
-        userFollowing.getFollowed().add(userIdtoFollow);
+        userFollowing.getFollowed().add(userIdToFollow);
         userToFollow.getFollowers().add(userId);
     }
 
     @Override
-    public void unfollow(int userId, int userIdtoUnfollow) {
+    public void unfollow(int userId, int userIdToUnfollow) {
         User userUnfollowing = userRepository.fetchById(userId);
-        userUnfollowing.getFollowed().remove(userIdtoUnfollow);
+        userUnfollowing.getFollowed().remove(userIdToUnfollow);
     }
 
     @Override
