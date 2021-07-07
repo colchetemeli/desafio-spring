@@ -19,11 +19,7 @@ public class UserRepository implements IUserRepository {
     public User fetchById(int userId) {
 
         try {
-            for (User user : this.getUsers() ) {
-                if(user.getId() == userId){
-                    return user;
-                }
-            }
+            this.getUsers().stream().filter(user -> user.getId() == userId).findFirst().get();
         } catch (Exception e) {
             e.printStackTrace();
         }
