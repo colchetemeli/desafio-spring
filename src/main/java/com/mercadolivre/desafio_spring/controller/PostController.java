@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/products")
 public class PostController implements IPostController{
 
-    private IPostsService postsService;
+    private final IPostsService postsService;
 
     @Autowired
     public PostController(IPostsService postsService) {
@@ -26,7 +26,7 @@ public class PostController implements IPostController{
     //US 0006
     @Override
     @GetMapping("/followed/{userId}/list")
-    public FollowedPostsDTO getFollowedPosts(@PathVariable int userId, @RequestParam(required = false) String order) {
+    public FollowedPostsDTO getFollowedPosts(@PathVariable int userId, @RequestParam(defaultValue = "") String order) {
         return postsService.getFollowedPosts(userId, order);
     }
 
