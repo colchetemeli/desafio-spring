@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Repository
 public class PostRepository implements IPostRepository{
@@ -39,12 +41,9 @@ public class PostRepository implements IPostRepository{
         List<Post> postsByUser = new ArrayList<>();
         try {
             List<Post> posts = this.getList();
-            for (Post post:posts
-                 ) {
-                if(post.getUserId() == userId){
-                    postsByUser.add(post);
-                }
-            }
+            postsByUser = posts.stream()
+                    .filter(p -> Objects.equals( p.getUserId(), userId ))
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -61,12 +60,9 @@ public class PostRepository implements IPostRepository{
         List<Post> promosByUser = new ArrayList<>();
         try {
             List<Post> postsByUser = this.fetchPostsByUser(userId);
-            for (Post post:postsByUser
-            ) {
-                if(post.isHasPromo()){
-                    promosByUser.add(post);
-                }
-            }
+            promosByUser = postsByUser.stream()
+                    .filter(Post::isHasPromo)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             e.printStackTrace();
         }
