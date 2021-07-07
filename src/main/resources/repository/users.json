@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Usuario 1",
+    "followers": [],
+    "followed": []
+  },
+  {
+    "id": 2 ,
+    "name": "Usuario 2",
+    "followers": [],
+    "followed": []
+  },
+  {
+    "id": 3 ,
+    "name": "Usuario 3",
+    "followers": [],
+    "followed": []
+  },
+  {
+    "id": 4 ,
+    "name": "Usuario 4",
+    "followers": [],
+    "followed": []
+  }
+]
