@@ -18,13 +18,7 @@ public class UserRepository implements IUserRepository {
     @Override
     public User fetchById(int userId) {
 
-        try {
-            this.getUsers().stream().filter(user -> user.getId() == userId).findFirst().get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return new User();
+        return this.getUsers().stream().filter(user -> user.getId() == userId).findFirst().orElse(null);
     }
 
     @Override
