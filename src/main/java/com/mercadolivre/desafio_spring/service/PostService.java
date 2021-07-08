@@ -17,7 +17,7 @@ public class PostService implements IPostsService {
 
     private final PostRepository postRepository;
     private final UsersRepository usersRepository;
-    private static final String REVERSE_ORDERING = "date_asc";
+    private static final String ASC_ORDERING = "date_asc";
 
     @Autowired
     public PostService(PostRepository postRepository, UsersRepository usersRepository) {
@@ -77,7 +77,7 @@ public class PostService implements IPostsService {
     }
 
     private List<Post> orderList(List<Post> list, String order) {
-        if(Objects.equals(order, REVERSE_ORDERING)) {
+        if(Objects.equals(order, ASC_ORDERING)) {
             list.sort(Comparator.comparing(Post::getDate));
         } else {
             list.sort(Comparator.comparing(Post::getDate).reversed());
