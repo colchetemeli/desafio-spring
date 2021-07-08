@@ -26,7 +26,7 @@ public class UserService implements IUserService {
 
     @Override
     public void follow(int  userId, int userIdToFollow) {
-        if (userId != userIdToFollow) {
+        if (isFollowValid(userId, userIdToFollow)) {
             User userFollowing = userRepository.fetchById(userId);
             User userToFollow = userRepository.fetchById(userIdToFollow);
 
@@ -36,6 +36,11 @@ public class UserService implements IUserService {
             userRepository.update(userId, userFollowing);
             userRepository.update(userIdToFollow, userToFollow);
         }
+    }
+
+    private boolean isFollowValid(int userId, int userIdToFollow) {
+        List<Integer> followedIdList = userRepository.fetchById(userId).getFollowed();
+        return (!followedIdList.contains(userIdToFollow) && (userId != userIdToFollow));
     }
 
     @Override
