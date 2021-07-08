@@ -3,11 +3,13 @@ package com.mercadolivre.desafio_spring.repository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mercadolivre.desafio_spring.entity.User;
+import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 public class UserRepository implements IUserRepository {
 
     private ObjectMapper mapper = new ObjectMapper();

@@ -4,8 +4,9 @@ import com.mercadolivre.desafio_spring.dto.*;
 import com.mercadolivre.desafio_spring.entity.Post;
 import com.mercadolivre.desafio_spring.entity.User;
 import com.mercadolivre.desafio_spring.exceptions.CreatePostException;
+import com.mercadolivre.desafio_spring.repository.IPostRepository;
+import com.mercadolivre.desafio_spring.repository.IUserRepository;
 import com.mercadolivre.desafio_spring.repository.PostRepository;
-import com.mercadolivre.desafio_spring.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +16,14 @@ import java.util.stream.Collectors;
 @Service
 public class PostService implements IPostsService {
 
-    private final PostRepository postRepository;
-    private final UsersRepository usersRepository;
+    private final IPostRepository postRepository;
+    private final IUserRepository usersRepository;
     private static final String ASC_ORDERING = "date_asc";
 
     @Autowired
-    public PostService(PostRepository postRepository, UsersRepository usersRepository) {
+    public PostService(IPostRepository postRepository, IUserRepository userRepository) {
         this.postRepository = postRepository;
-        this.usersRepository = usersRepository;
+        this.usersRepository = userRepository;
     }
 
     @Override
