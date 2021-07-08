@@ -17,6 +17,7 @@ public class PostService implements IPostsService {
 
     private final PostRepository postRepository;
     private final UsersRepository usersRepository;
+    private static final String REVERSE_ORDERING = "date_asc";
 
     @Autowired
     public PostService(PostRepository postRepository, UsersRepository usersRepository) {
@@ -51,7 +52,7 @@ public class PostService implements IPostsService {
 
     @Override
     public UserPromosDTO getPromosByUser(int userId) {
-        List<Post> listPosts = orderList(this.postRepository.fetchPromosByUser(userId), "date_desc");
+        List<Post> listPosts = orderList(this.postRepository.fetchPromosByUser(userId), "");
         List<PromoPostDTO> promoPostDTOlist = listPosts.stream()
                 .map(Post::toPromoPostDTO)
                 .collect(Collectors.toList());
@@ -76,13 +77,12 @@ public class PostService implements IPostsService {
     }
 
     private List<Post> orderList(List<Post> list, String order) {
-        List<Post> orderedList = list
-                .stream().sorted(Comparator.comparing(Post::getDate)).collect(Collectors.toList());
-
-        if (order.equalsIgnoreCase("date_desc")) {
-            Collections.reverse(orderedList);
+        if(Objects.equals(order, REVERSE_ORDERING)) {
+            list.sort(Comparator.comparing(Post::getDate));
+        } else {
+            list.sort(Comparator.comparing(Post::getDate).reversed());
         }
 
-        return orderedList;
+        return list;
     }
 }
