@@ -3,15 +3,15 @@ package com.mercadolivre.desafio_spring.service;
 import com.mercadolivre.desafio_spring.dto.*;
 import com.mercadolivre.desafio_spring.entity.Post;
 import com.mercadolivre.desafio_spring.entity.User;
-import com.mercadolivre.desafio_spring.exceptions.CreatePostException;
 import com.mercadolivre.desafio_spring.repository.IPostRepository;
 import com.mercadolivre.desafio_spring.repository.IUserRepository;
-import com.mercadolivre.desafio_spring.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.mercadolivre.desafio_spring.util.UserValidation.validateIfUserExists;
 
 @Service
 public class PostService implements IPostsService {
@@ -28,7 +28,8 @@ public class PostService implements IPostsService {
 
     @Override
     public void createPost(PostDTO postDto) {
-        validateUser(postDto.getUserId());
+        User user = usersRepository.fetchById(postDto.getUserId());
+        validateIfUserExists(user);
         this.postRepository.persistPost(postDto.toEntity());
 
     }
@@ -40,7 +41,8 @@ public class PostService implements IPostsService {
 
     @Override
     public void createPromoPost(PromoPostDTO promoPostDto) {
-        validateUser(promoPostDto.getUserId());
+        User user = usersRepository.fetchById(promoPostDto.getUserId());
+        validateIfUserExists(user);
         this.postRepository.persistPost(promoPostDto.toEntity());
     }
 
@@ -69,12 +71,6 @@ public class PostService implements IPostsService {
         return orderedPostList.stream()
                 .map(Post::toPostDTO)
                 .collect(Collectors.toList());
-    }
-
-    private void validateUser(int userId) {
-        if (Objects.isNull(usersRepository.fetchById(userId))) {
-            throw new CreatePostException("Could not create a new post, this user does not exists!");
-        }
     }
 
     private List<Post> orderList(List<Post> list, String order) {
