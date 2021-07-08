@@ -59,28 +59,25 @@ public class UserService implements IUserService {
     @Override
     public FollowersCountedDTO countFollowers(int userId) {
         User user = userRepository.fetchById(userId);
-        int numberOfFollowers = user.getFollowers().size();
-
-        return new FollowersCountedDTO(userId, user.getName(), numberOfFollowers);
+            int numberOfFollowers = user.getFollowers().size();
+            return new FollowersCountedDTO(userId, user.getName(), numberOfFollowers);
     }
 
     @Override
     public UserFollowersDTO getFollowers(int userId, String order) {
         User user = userRepository.fetchById(userId);
-
-        List<UserDTO> followers = getAllUsers(user.getFollowers());
-        sortFollowers(followers, order);
-
-        return new UserFollowersDTO(user.getId(), user.getName(), followers);
+            List<UserDTO> followers = getAllUsers(user.getFollowers());
+            sortFollowers(followers, order);
+            return new UserFollowersDTO(user.getId(), user.getName(), followers);
     }
 
     @Override
     public UserFollowedDTO getFollowed(int userId, String order) {
         User user = userRepository.fetchById(userId);
-        List<UserDTO> followed = getAllUsers(user.getFollowed());
-        sortFollowers(followed, order);
+            List<UserDTO> followed = getAllUsers(user.getFollowed());
+            sortFollowers(followed, order);
 
-        return new UserFollowedDTO(user.getId(), user.getName(), followed);
+            return new UserFollowedDTO(user.getId(), user.getName(), followed);
     }
 
     private void sortFollowers(List<UserDTO> followersDTO, String order) {
