@@ -26,19 +26,9 @@ public class UserRepository implements IUserRepository {
         List<User> users = getUsers();
 
         if (users.removeIf(user1 ->  user1.getId() == userId)) {
-
             users.add(user);
-
             try {
-
-                PrintWriter buffer = new PrintWriter(new BufferedWriter(new FileWriter(FILE)));
-
-                buffer.flush();
-
-                mapper.writeValue(buffer, users);
-
-                buffer.close();
-
+                mapper.writeValue(FILE, users);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -52,10 +42,7 @@ public class UserRepository implements IUserRepository {
     private List<User> getUsers(){
         List<User> users = new ArrayList<>();
         try {
-            FileInputStream is = new FileInputStream(FILE);
-            TypeReference<List<User>> typeReference = new TypeReference<List<User>>() {};
-            users = mapper.readValue(is, typeReference);
-            is.close();
+            users = mapper.readValue(FILE, new TypeReference<>(){});
         } catch (IOException e) {
             e.printStackTrace();
         }
