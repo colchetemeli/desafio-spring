@@ -3,6 +3,7 @@ package com.mercadolivre.desafio_spring.repository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mercadolivre.desafio_spring.entity.Post;
+import com.mercadolivre.desafio_spring.exception.ConflictException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -25,9 +26,13 @@ public class PostRepository implements IPostRepository{
 
     @Override
     public void persistPost(Post post) {
+        List<Post> posts = this.getList();
+        if ( posts.stream().
+                anyMatch(p -> Objects.equals(p.getId(), post.getId())) ){
+            throw new ConflictException("This post_id already has been used");
+        }
+        posts.add(post);
         try {
-            List<Post> posts = this.getList();
-            posts.add(post);
             mapper.writeValue(FILE, posts);
         } catch (Exception e) {
             e.printStackTrace();

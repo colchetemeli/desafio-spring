@@ -3,10 +3,9 @@ package com.mercadolivre.desafio_spring.service;
 import com.mercadolivre.desafio_spring.dto.*;
 import com.mercadolivre.desafio_spring.entity.Post;
 import com.mercadolivre.desafio_spring.entity.User;
-import com.mercadolivre.desafio_spring.exceptions.CreatePostException;
+import com.mercadolivre.desafio_spring.exception.NotFoundException;
 import com.mercadolivre.desafio_spring.repository.IPostRepository;
 import com.mercadolivre.desafio_spring.repository.IUserRepository;
-import com.mercadolivre.desafio_spring.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -73,7 +72,7 @@ public class PostService implements IPostsService {
 
     private void validateUser(int userId) {
         if (Objects.isNull(usersRepository.fetchById(userId))) {
-            throw new CreatePostException("Could not create a new post, this user does not exists!");
+            throw new NotFoundException("Could not create a new post, this user does not exists!");
         }
     }
 
