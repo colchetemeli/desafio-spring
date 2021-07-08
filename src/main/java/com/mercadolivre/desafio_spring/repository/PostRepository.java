@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class PostRepository implements IPostRepository{
 
     private static final File FILE = new File("src/main/resources/repository/posts.json");
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     @Autowired
     public PostRepository(ObjectMapper mapper) {
@@ -28,9 +28,7 @@ public class PostRepository implements IPostRepository{
         try {
             List<Post> posts = this.getList();
             posts.add(post);
-            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(FILE)));
-            mapper.writeValue(out, posts);
-            out.close();
+            mapper.writeValue(FILE, posts);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -38,16 +36,9 @@ public class PostRepository implements IPostRepository{
 
     @Override
     public List<Post> fetchPostsByUser(int userId) {
-        List<Post> postsByUser = new ArrayList<>();
-        try {
-            List<Post> posts = this.getList();
-            postsByUser = posts.stream()
+        return this.getList().stream()
                     .filter(p -> Objects.equals( p.getUserId(), userId ))
                     .collect(Collectors.toList());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return postsByUser;
     }
 
     @Override
@@ -57,16 +48,9 @@ public class PostRepository implements IPostRepository{
 
     @Override
     public List<Post> fetchPromosByUser(int userId) {
-        List<Post> promosByUser = new ArrayList<>();
-        try {
-            List<Post> postsByUser = this.fetchPostsByUser(userId);
-            promosByUser = postsByUser.stream()
-                    .filter(Post::isHasPromo)
-                    .collect(Collectors.toList());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return promosByUser;
+        return this.fetchPostsByUser(userId).stream()
+                .filter(Post::isHasPromo)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -77,10 +61,7 @@ public class PostRepository implements IPostRepository{
     private List<Post> getList(){
         List<Post> posts = new ArrayList<>();
         try {
-            FileInputStream is = new FileInputStream(FILE);
-            TypeReference<List<Post>> typeReference = new TypeReference<>() {};
-            posts = mapper.readValue(is, typeReference);
-            is.close();
+            posts = mapper.readValue(FILE, new TypeReference<>(){});
         } catch (IOException e) {
             e.printStackTrace();
         }
