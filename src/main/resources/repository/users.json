@@ -1,1 +1,1 @@
-[{"id":2,"name":"Usuario 2","followers":[],"followed":[]},{"id":3,"name":"Usuario 3","followers":[],"followed":[]},{"id":4,"name":"Usuario 4","followers":[],"followed":[]},{"id":1,"name":"Miria","followers":[],"followed":[]}]
+[{"id":3,"name":"Usuario 3","followers":[],"followed":[]},{"id":4,"name":"Usuario 4","followers":[],"followed":[]},{"id":2,"name":"Usuario 2","followers":[1],"followed":[1]},{"id":1,"name":"Miria","followers":[2],"followed":[2]}]

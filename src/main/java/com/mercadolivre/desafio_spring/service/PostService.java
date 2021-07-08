@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.mercadolivre.desafio_spring.util.UserValidation.validateIfUserExists;
+
 @Service
 public class PostService implements IPostsService {
 
@@ -27,7 +29,8 @@ public class PostService implements IPostsService {
 
     @Override
     public void createPost(PostDTO postDto) {
-        validateUser(postDto.getUserId());
+        User user = usersRepository.fetchById(postDto.getUserId());
+        validateIfUserExists(user);
         this.postRepository.persistPost(postDto.toEntity());
 
     }
@@ -39,7 +42,8 @@ public class PostService implements IPostsService {
 
     @Override
     public void createPromoPost(PromoPostDTO promoPostDto) {
-        validateUser(promoPostDto.getUserId());
+        User user = usersRepository.fetchById(promoPostDto.getUserId());
+        validateIfUserExists(user);
         this.postRepository.persistPost(promoPostDto.toEntity());
     }
 
