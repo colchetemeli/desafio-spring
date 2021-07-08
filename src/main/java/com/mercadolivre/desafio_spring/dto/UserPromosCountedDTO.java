@@ -10,13 +10,13 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserPromosCountedDTO extends UserDTO{
+public class UserPromosCountedDTO extends UserDTO {
+
+    @JsonProperty("promoproducts_count")
+    private int promoProducts;
 
     public UserPromosCountedDTO(int userId, String userName, int promoProducts) {
         super(userId, userName);
         this.promoProducts = promoProducts;
     }
-
-    @JsonProperty("promoproducts_count")
-    private int promoProducts;
 }

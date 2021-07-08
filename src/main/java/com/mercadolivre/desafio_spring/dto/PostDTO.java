@@ -17,7 +17,6 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-
 @JsonPropertyOrder({ "id_post", "date", "detail", "category", "price"})
 public class PostDTO {
 

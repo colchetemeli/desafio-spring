@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.mercadolivre.desafio_spring.dto.PostDTO;
+import com.mercadolivre.desafio_spring.dto.PromoPostDTO;
 import com.mercadolivre.desafio_spring.util.Constants;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,11 +18,9 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-
 @JsonPropertyOrder({ "id_post", "date", "detail", "category", "price"})
 public class Post {
 
-    @JsonIgnore
     private int userId;
     @JsonProperty("id_post")
     private int id;
@@ -41,5 +40,19 @@ public class Post {
                 .setDetail(this.detail)
                 .setCategory(this.category)
                 .setPrice(this.price);
+    }
+
+    public PromoPostDTO toPromoPostDTO() {
+        PromoPostDTO promoPostDTO = new PromoPostDTO();
+        promoPostDTO.setUserId(this.userId);
+        promoPostDTO.setId(this.id);
+        promoPostDTO.setDate(this.date);
+        promoPostDTO.setDetail(this.detail);
+        promoPostDTO.setCategory(this.category);
+        promoPostDTO.setPrice(this.price);
+        promoPostDTO.setHasPromo(this.hasPromo);
+        promoPostDTO.setDiscount(this.discount);
+
+        return promoPostDTO;
     }
 }

@@ -25,9 +25,9 @@ public class PostService implements IPostsService {
     }
 
     @Override
-    public void createPost(PostDTO post) {
-        validateUser(post.getUserId(), "Could not create a new post, this user does not exists!");
-        this.postRepository.persistPost(post.toEntity());
+    public void createPost(PostDTO postDto) {
+        validateUser(postDto.getUserId());
+        this.postRepository.persistPost(postDto.toEntity());
 
     }
 
@@ -37,9 +37,9 @@ public class PostService implements IPostsService {
     }
 
     @Override
-    public void createPromoPost(PromoPostDTO post) {
-        validateUser(post.getUserId(), "Could not create a new post, this user does not exists!");
-        this.postRepository.persistPost(post.toEntity());
+    public void createPromoPost(PromoPostDTO promoPostDto) {
+        validateUser(promoPostDto.getUserId());
+        this.postRepository.persistPost(promoPostDto.toEntity());
     }
 
     @Override
@@ -51,25 +51,27 @@ public class PostService implements IPostsService {
 
     @Override
     public UserPromosDTO getPromosByUser(int userId) {
-        List<Post> listPromoPosts = orderList(this.postRepository.fetchPromosByUser(userId), "date_desc");
+        List<Post> listPosts = orderList(this.postRepository.fetchPromosByUser(userId), "date_desc");
+        List<PromoPostDTO> promoPostDTOlist = listPosts.stream()
+                .map(Post::toPromoPostDTO)
+                .collect(Collectors.toList());
+
         User user = this.usersRepository.fetchById(userId);
-        return new UserPromosDTO(user.getId(), user.getName(), listPromoPosts);
+
+        return new UserPromosDTO(user.getId(), user.getName(), promoPostDTOlist);
     }
 
     public List<PostDTO> getOrderedPostList(int userId, String order) {
         List<Post> orderedPostList = orderList(this.postRepository.fetchPostsByUser(userId), order);
-        List<PostDTO> postDTOList = new ArrayList<>();
 
-        orderedPostList.forEach(p -> {
-            postDTOList.add(p.toPostDTO());
-        });
-
-        return postDTOList;
+        return orderedPostList.stream()
+                .map(Post::toPostDTO)
+                .collect(Collectors.toList());
     }
 
-    private void validateUser(int userId, String message) {
+    private void validateUser(int userId) {
         if (Objects.isNull(usersRepository.fetchById(userId))) {
-            throw new CreatePostException(message);
+            throw new CreatePostException("Could not create a new post, this user does not exists!");
         }
     }
 
