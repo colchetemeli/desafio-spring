@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserService implements IUserService {
 
-    final IUserRepository userRepository;
+    private final IUserRepository userRepository;
     private static final String REVERSE_ORDERING = "name_desc";
 
     @Autowired
@@ -86,9 +86,10 @@ public class UserService implements IUserService {
         }
     }
 
-    private List<UserDTO> getAllUsers(List<Integer> followersIds) {
+    public List<UserDTO> getAllUsers(List<Integer> followersIds) {
         return followersIds.stream()
                 .map(userRepository::fetchById)
+                .filter(Objects::nonNull)
                 .map(follower -> new UserDTO(follower.getId(), follower.getName()))
                 .collect(Collectors.toList());
     }
