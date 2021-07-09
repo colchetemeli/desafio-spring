@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.mercadolivre.desafio_spring.util.UserValidation.validateIfUserExists;
-
 @Service
 public class PostService implements IPostsService {
 
@@ -29,20 +27,18 @@ public class PostService implements IPostsService {
     @Override
     public void createPost(PostDTO postDto) {
         User user = usersRepository.fetchById(postDto.getUserId());
-        validateIfUserExists(user);
         this.postRepository.persistPost(postDto.toEntity());
 
     }
 
     @Override
     public FollowedPostsDTO getFollowedPosts(int userId, String order) {
-        validateIfUserExists(usersRepository.fetchById(userId));
-        return new FollowedPostsDTO(userId, getOrderedPostList(userId, order));
+        return new FollowedPostsDTO(userId, getOrderedPostList(usersRepository.fetchById(userId).getId(), order));
     }
 
     @Override
     public void createPromoPost(PromoPostDTO promoPostDto) {
-        validateIfUserExists(usersRepository.fetchById(promoPostDto.getUserId()));
+        User user = usersRepository.fetchById(promoPostDto.getUserId());
         this.postRepository.persistPost(promoPostDto.toEntity());
     }
 
@@ -50,7 +46,6 @@ public class PostService implements IPostsService {
     public UserPromosCountedDTO countPromoByUser(int userId) {
         int quantityPromoPosts = this.postRepository.countPromoByUser(userId);
         User user = this.usersRepository.fetchById(userId);
-        validateIfUserExists(user);
         return new UserPromosCountedDTO(user.getId(), user.getName(), quantityPromoPosts);
     }
 
@@ -62,7 +57,6 @@ public class PostService implements IPostsService {
                 .collect(Collectors.toList());
 
         User user = this.usersRepository.fetchById(userId);
-        validateIfUserExists(user);
 
         return new UserPromosDTO(user.getId(), user.getName(), promoPostDTOlist);
     }

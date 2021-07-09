@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.mercadolivre.desafio_spring.util.UserValidation.validateIfUserExists;
-
 @Service
 public class UserService implements IUserService {
 
@@ -58,7 +56,6 @@ public class UserService implements IUserService {
     @Override
     public FollowersCountedDTO countFollowers(int userId) {
         User user = userRepository.fetchById(userId);
-        validateIfUserExists(user);
         int numberOfFollowers = user.getFollowers().size();
         return new FollowersCountedDTO(userId, user.getName(), numberOfFollowers);
     }
@@ -66,7 +63,6 @@ public class UserService implements IUserService {
     @Override
     public UserFollowersDTO getFollowers(int userId, String order) {
         User user = userRepository.fetchById(userId);
-        validateIfUserExists(user);
         List<UserDTO> followers = getAllUsers(user.getFollowers());
         sortFollowers(followers, order);
         return new UserFollowersDTO(user.getId(), user.getName(), followers);
@@ -75,7 +71,6 @@ public class UserService implements IUserService {
     @Override
     public UserFollowedDTO getFollowed(int userId, String order) {
         User user = userRepository.fetchById(userId);
-        validateIfUserExists(user);
         List<UserDTO> followed = getAllUsers(user.getFollowed());
         sortFollowers(followed, order);
         return new UserFollowedDTO(user.getId(), user.getName(), followed);
@@ -98,21 +93,12 @@ public class UserService implements IUserService {
     }
 
     private void validateFollow(User userFollowing, User userFollowed) {
-
-        validateIfUserExists(userFollowing);
-        validateIfUserExists(userFollowed);
-
         validateUsersNotEquals(userFollowing, userFollowed);
-
         validateIfUnfollows(userFollowing, userFollowed);
     }
 
     private void validateUnfollow(User userFollowing, User userFollowed) {
-        validateIfUserExists(userFollowed);
-        validateIfUserExists(userFollowing);
-
         validateIfFollows(userFollowing, userFollowed);
-
         validateUsersNotEquals(userFollowed, userFollowing);
     }
 

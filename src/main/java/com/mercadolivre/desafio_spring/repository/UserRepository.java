@@ -3,11 +3,13 @@ package com.mercadolivre.desafio_spring.repository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mercadolivre.desafio_spring.entity.User;
+import com.mercadolivre.desafio_spring.exception.NotFoundException;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class UserRepository implements IUserRepository {
@@ -18,8 +20,7 @@ public class UserRepository implements IUserRepository {
 
     @Override
     public User fetchById(int userId) {
-
-        return this.getUsers().stream().filter(user -> user.getId() == userId).findFirst().orElse(null);
+        return this.getUsers().stream().filter(user -> user.getId() == userId).findFirst().orElseThrow(() -> new NotFoundException("User not found"));
     }
 
     @Override
