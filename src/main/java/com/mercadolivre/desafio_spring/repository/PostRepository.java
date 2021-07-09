@@ -27,8 +27,7 @@ public class PostRepository implements IPostRepository{
     @Override
     public void persistPost(Post post) {
         List<Post> posts = this.getList();
-        if ( posts.stream().
-                anyMatch(p -> Objects.equals(p.getId(), post.getId())) ){
+        if ( posts.stream().anyMatch(p -> Objects.equals(p.getId(),post.getId())) ){
             throw new ConflictException("This post_id already has been used");
         }
         posts.add(post);

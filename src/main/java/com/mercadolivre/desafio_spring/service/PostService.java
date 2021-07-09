@@ -74,12 +74,6 @@ public class PostService implements IPostsService {
                 .collect(Collectors.toList());
     }
 
-    private void validateUser(int userId) {
-        if (Objects.isNull(usersRepository.fetchById(userId))) {
-            throw new NotFoundException("Could not create a new post, this user does not exists!");
-        }
-    }
-
     private List<Post> orderList(List<Post> list, String order) {
         if(Objects.equals(order, ASC_ORDERING)) {
             list.sort(Comparator.comparing(Post::getDate));
