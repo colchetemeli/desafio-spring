@@ -3,7 +3,6 @@ package com.mercadolivre.desafio_spring.service;
 import com.mercadolivre.desafio_spring.dto.*;
 import com.mercadolivre.desafio_spring.entity.Post;
 import com.mercadolivre.desafio_spring.entity.User;
-import com.mercadolivre.desafio_spring.exception.NotFoundException;
 import com.mercadolivre.desafio_spring.repository.IPostRepository;
 import com.mercadolivre.desafio_spring.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
