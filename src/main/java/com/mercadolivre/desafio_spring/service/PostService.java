@@ -33,8 +33,12 @@ public class PostService implements IPostsService {
 
     @Override
     public FollowedPostsDTO getFollowedPosts(int userId, String order) {
-        validateIfUserExists(userId);
-        return new FollowedPostsDTO(userId, getOrderedPostList(userId, order));
+        User user = getUserById(userId);
+
+        List<Post> followedPosts = fetchFollowedPostList(user);
+        orderList(followedPosts, order);
+
+        return new FollowedPostsDTO(userId, convertPostToDto(followedPosts));
     }
 
     @Override
@@ -55,7 +59,9 @@ public class PostService implements IPostsService {
     public UserPromosDTO getPromosByUser(int userId) {
         User user = getUserById(userId);
 
-        List<Post> listPosts = orderList(this.postRepository.fetchPromosByUser(userId), "");
+        List<Post> listPosts = this.postRepository.fetchPromosByUser(userId);
+        orderList(listPosts, "");
+
         List<PromoPostDTO> promoPostDTOlist = listPosts.stream()
                 .map(Post::toPromoPostDTO)
                 .collect(Collectors.toList());
@@ -63,23 +69,26 @@ public class PostService implements IPostsService {
         return new UserPromosDTO(user.getId(), user.getName(), promoPostDTOlist);
     }
 
-    public List<PostDTO> getOrderedPostList(int userId, String order) {
-        List<Post> orderedPostList = orderList(this.postRepository.fetchPostsByUser(userId), order);
-
-        return orderedPostList.stream()
+    public List<PostDTO> convertPostToDto(List<Post> postList) {
+        return postList.stream()
                 .map(Post::toPostDTO)
                 .filter(p -> p.getDate().after(subtractTwoWeeksFromCurrentDate()))
                 .collect(Collectors.toList());
     }
 
-    private List<Post> orderList(List<Post> list, String order) {
+    private void orderList(List<Post> list, String order) {
         if(Objects.equals(order, ASC_ORDERING)) {
             list.sort(Comparator.comparing(Post::getDate));
         } else {
             list.sort(Comparator.comparing(Post::getDate).reversed());
         }
+    }
 
-        return list;
+    private List<Post> fetchFollowedPostList(User user) {
+        return user.getFollowed().stream()
+        .map(postRepository::fetchPostsByUser)
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
     }
 
     private Date subtractTwoWeeksFromCurrentDate() {
