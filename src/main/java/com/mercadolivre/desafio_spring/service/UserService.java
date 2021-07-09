@@ -5,6 +5,7 @@ import com.mercadolivre.desafio_spring.dto.UserDTO;
 import com.mercadolivre.desafio_spring.dto.UserFollowedDTO;
 import com.mercadolivre.desafio_spring.dto.UserFollowersDTO;
 import com.mercadolivre.desafio_spring.entity.User;
+import com.mercadolivre.desafio_spring.exception.ValidateException;
 import com.mercadolivre.desafio_spring.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static com.mercadolivre.desafio_spring.util.UserValidation.validateIfUserExists;
 
 @Service
 public class UserService implements IUserService {
@@ -26,27 +29,23 @@ public class UserService implements IUserService {
 
     @Override
     public void follow(int  userId, int userIdToFollow) {
-        if (isFollowValid(userId, userIdToFollow)) {
             User userFollowing = userRepository.fetchById(userId);
             User userToFollow = userRepository.fetchById(userIdToFollow);
+            validateFollow(userFollowing, userToFollow);
 
             userFollowing.getFollowed().add(userIdToFollow);
             userToFollow.getFollowers().add(userId);
 
             userRepository.update(userId, userFollowing);
             userRepository.update(userIdToFollow, userToFollow);
-        }
-    }
-
-    private boolean isFollowValid(int userId, int userIdToFollow) {
-        List<Integer> followedIdList = userRepository.fetchById(userId).getFollowed();
-        return (!followedIdList.contains(userIdToFollow) && (userId != userIdToFollow));
     }
 
     @Override
     public void unfollow(int userId, int userIdToUnfollow) {
         User userFollowing = userRepository.fetchById(userId);
         User userToUnfollow = userRepository.fetchById(userIdToUnfollow);
+
+        validateUnfollow(userToUnfollow, userFollowing);
 
         userFollowing.getFollowed().remove(Integer.valueOf(userIdToUnfollow));
         userToUnfollow.getFollowers().remove(Integer.valueOf(userId));
@@ -59,25 +58,27 @@ public class UserService implements IUserService {
     @Override
     public FollowersCountedDTO countFollowers(int userId) {
         User user = userRepository.fetchById(userId);
-            int numberOfFollowers = user.getFollowers().size();
-            return new FollowersCountedDTO(userId, user.getName(), numberOfFollowers);
+        validateIfUserExists(user);
+        int numberOfFollowers = user.getFollowers().size();
+        return new FollowersCountedDTO(userId, user.getName(), numberOfFollowers);
     }
 
     @Override
     public UserFollowersDTO getFollowers(int userId, String order) {
         User user = userRepository.fetchById(userId);
-            List<UserDTO> followers = getAllUsers(user.getFollowers());
-            sortFollowers(followers, order);
-            return new UserFollowersDTO(user.getId(), user.getName(), followers);
+        validateIfUserExists(user);
+        List<UserDTO> followers = getAllUsers(user.getFollowers());
+        sortFollowers(followers, order);
+        return new UserFollowersDTO(user.getId(), user.getName(), followers);
     }
 
     @Override
     public UserFollowedDTO getFollowed(int userId, String order) {
         User user = userRepository.fetchById(userId);
-            List<UserDTO> followed = getAllUsers(user.getFollowed());
-            sortFollowers(followed, order);
-
-            return new UserFollowedDTO(user.getId(), user.getName(), followed);
+        validateIfUserExists(user);
+        List<UserDTO> followed = getAllUsers(user.getFollowed());
+        sortFollowers(followed, order);
+        return new UserFollowedDTO(user.getId(), user.getName(), followed);
     }
 
     private void sortFollowers(List<UserDTO> followersDTO, String order) {
@@ -94,5 +95,42 @@ public class UserService implements IUserService {
                 .filter(Objects::nonNull)
                 .map(follower -> new UserDTO(follower.getId(), follower.getName()))
                 .collect(Collectors.toList());
+    }
+
+    private void validateFollow(User userFollowing, User userFollowed) {
+
+        validateIfUserExists(userFollowing);
+        validateIfUserExists(userFollowed);
+
+        validateUsersNotEquals(userFollowing, userFollowed);
+
+        validateIfUnfollows(userFollowing, userFollowed);
+    }
+
+    private void validateUnfollow(User userFollowing, User userFollowed) {
+        validateIfUserExists(userFollowed);
+        validateIfUserExists(userFollowing);
+
+        validateIfFollows(userFollowing, userFollowed);
+
+        validateUsersNotEquals(userFollowed, userFollowing);
+    }
+
+    private void validateUsersNotEquals(User user1, User user2) {
+        if (Objects.equals(user1.getId(), user2.getId())) {
+            throw new ValidateException("The users are the same.");
+        }
+    }
+
+    private void validateIfUnfollows(User user, User user2) {
+        if (user.getFollowed().contains(user2.getId())) {
+            throw new ValidateException("The user is already following " + user2.getName());
+        }
+    }
+
+    private void validateIfFollows(User userFollowing, User userFollowed) {
+        if (!userFollowed.getFollowed().contains(userFollowing.getId())) {
+            throw new ValidateException("The user does not follow " + userFollowed.getName());
+        }
     }
 }
