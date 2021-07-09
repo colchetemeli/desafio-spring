@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -27,8 +28,8 @@ public class UserService implements IUserService {
 
     @Override
     public void follow(int  userId, int userIdToFollow) {
-            User userFollowing = userRepository.fetchById(userId);
-            User userToFollow = userRepository.fetchById(userIdToFollow);
+            User userFollowing = userRepository.fetchById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
+            User userToFollow = userRepository.fetchById(userIdToFollow).orElseThrow(() -> new NoSuchElementException("User not found"));
             validateFollow(userFollowing, userToFollow);
 
             userFollowing.getFollowed().add(userIdToFollow);
@@ -40,8 +41,8 @@ public class UserService implements IUserService {
 
     @Override
     public void unfollow(int userId, int userIdToUnfollow) {
-        User userFollowing = userRepository.fetchById(userId);
-        User userToUnfollow = userRepository.fetchById(userIdToUnfollow);
+        User userFollowing = userRepository.fetchById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
+        User userToUnfollow = userRepository.fetchById(userIdToUnfollow).orElseThrow(() -> new NoSuchElementException("User not found"));
 
         validateUnfollow(userToUnfollow, userFollowing);
 
@@ -55,14 +56,14 @@ public class UserService implements IUserService {
 
     @Override
     public FollowersCountedDTO countFollowers(int userId) {
-        User user = userRepository.fetchById(userId);
+        User user = userRepository.fetchById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
         int numberOfFollowers = user.getFollowers().size();
         return new FollowersCountedDTO(userId, user.getName(), numberOfFollowers);
     }
 
     @Override
     public UserFollowersDTO getFollowers(int userId, String order) {
-        User user = userRepository.fetchById(userId);
+        User user = userRepository.fetchById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
         List<UserDTO> followers = getAllUsers(user.getFollowers());
         sortFollowers(followers, order);
         return new UserFollowersDTO(user.getId(), user.getName(), followers);
@@ -70,7 +71,7 @@ public class UserService implements IUserService {
 
     @Override
     public UserFollowedDTO getFollowed(int userId, String order) {
-        User user = userRepository.fetchById(userId);
+        User user = userRepository.fetchById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
         List<UserDTO> followed = getAllUsers(user.getFollowed());
         sortFollowers(followed, order);
         return new UserFollowedDTO(user.getId(), user.getName(), followed);
@@ -88,7 +89,7 @@ public class UserService implements IUserService {
         return followersIds.stream()
                 .map(userRepository::fetchById)
                 .filter(Objects::nonNull)
-                .map(follower -> new UserDTO(follower.getId(), follower.getName()))
+                .map(follower -> new UserDTO(follower.get().getId(), follower.get().getName()))
                 .collect(Collectors.toList());
     }
 

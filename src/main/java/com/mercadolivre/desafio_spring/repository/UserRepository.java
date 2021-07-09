@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Repository
 public class UserRepository implements IUserRepository {
@@ -18,8 +18,8 @@ public class UserRepository implements IUserRepository {
     private static final File FILE = new File("src/main/resources/repository/users.json");
 
     @Override
-    public User fetchById(int userId) {
-        return this.getUsers().stream().filter(user -> user.getId() == userId).findFirst().orElseThrow(() -> new NoSuchElementException("User not found"));
+    public Optional<User> fetchById(int userId) {
+        return this.getUsers().stream().filter(user -> user.getId() == userId).findFirst();
     }
 
     @Override

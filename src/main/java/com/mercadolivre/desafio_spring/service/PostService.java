@@ -26,26 +26,27 @@ public class PostService implements IPostsService {
 
     @Override
     public void createPost(PostDTO postDto) {
-        User user = usersRepository.fetchById(postDto.getUserId());
+        User user = usersRepository.fetchById(postDto.getUserId()).orElseThrow(() -> new NoSuchElementException("User not found"));
         this.postRepository.persistPost(postDto.toEntity());
 
     }
 
     @Override
     public FollowedPostsDTO getFollowedPosts(int userId, String order) {
-        return new FollowedPostsDTO(userId, getOrderedPostList(usersRepository.fetchById(userId).getId(), order));
+        User user = usersRepository.fetchById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
+        return new FollowedPostsDTO(userId, getOrderedPostList(user.getId(), order));
     }
 
     @Override
     public void createPromoPost(PromoPostDTO promoPostDto) {
-        User user = usersRepository.fetchById(promoPostDto.getUserId());
+        User user = usersRepository.fetchById(promoPostDto.getUserId()).orElseThrow(() -> new NoSuchElementException("User not found"));
         this.postRepository.persistPost(promoPostDto.toEntity());
     }
 
     @Override
     public UserPromosCountedDTO countPromoByUser(int userId) {
         int quantityPromoPosts = this.postRepository.countPromoByUser(userId);
-        User user = this.usersRepository.fetchById(userId);
+        User user = this.usersRepository.fetchById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
         return new UserPromosCountedDTO(user.getId(), user.getName(), quantityPromoPosts);
     }
 
@@ -56,7 +57,7 @@ public class PostService implements IPostsService {
                 .map(Post::toPromoPostDTO)
                 .collect(Collectors.toList());
 
-        User user = this.usersRepository.fetchById(userId);
+        User user = this.usersRepository.fetchById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
 
         return new UserPromosDTO(user.getId(), user.getName(), promoPostDTOlist);
     }
