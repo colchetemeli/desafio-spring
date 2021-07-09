@@ -36,13 +36,13 @@ public class PostService implements IPostsService {
 
     @Override
     public FollowedPostsDTO getFollowedPosts(int userId, String order) {
+        validateIfUserExists(usersRepository.fetchById(userId));
         return new FollowedPostsDTO(userId, getOrderedPostList(userId, order));
     }
 
     @Override
     public void createPromoPost(PromoPostDTO promoPostDto) {
-        User user = usersRepository.fetchById(promoPostDto.getUserId());
-        validateIfUserExists(user);
+        validateIfUserExists(usersRepository.fetchById(promoPostDto.getUserId()));
         this.postRepository.persistPost(promoPostDto.toEntity());
     }
 
@@ -50,6 +50,7 @@ public class PostService implements IPostsService {
     public UserPromosCountedDTO countPromoByUser(int userId) {
         int quantityPromoPosts = this.postRepository.countPromoByUser(userId);
         User user = this.usersRepository.fetchById(userId);
+        validateIfUserExists(user);
         return new UserPromosCountedDTO(user.getId(), user.getName(), quantityPromoPosts);
     }
 
@@ -61,6 +62,7 @@ public class PostService implements IPostsService {
                 .collect(Collectors.toList());
 
         User user = this.usersRepository.fetchById(userId);
+        validateIfUserExists(user);
 
         return new UserPromosDTO(user.getId(), user.getName(), promoPostDTOlist);
     }
