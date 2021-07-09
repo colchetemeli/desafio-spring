@@ -70,7 +70,7 @@ public class PostService implements IPostsService {
 
         return orderedPostList.stream()
                 .map(Post::toPostDTO)
-                .filter(p -> p.getDate().after(subtractTwoWeaksFromCurrentDate()))
+                .filter(p -> p.getDate().after(subtractTwoWeeksFromCurrentDate()))
                 .collect(Collectors.toList());
     }
 
@@ -84,7 +84,7 @@ public class PostService implements IPostsService {
         return list;
     }
 
-    private Date subtractTwoWeaksFromCurrentDate() {
+    private Date subtractTwoWeeksFromCurrentDate() {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.WEEK_OF_MONTH, - 2);
         return calendar.getTime();
