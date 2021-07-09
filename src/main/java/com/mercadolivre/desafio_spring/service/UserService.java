@@ -29,7 +29,7 @@ public class UserService implements IUserService {
     @Override
     public void follow(int  userId, int userIdToFollow) {
             User userFollowing = userRepository.fetchById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
-            User userToFollow = userRepository.fetchById(userIdToFollow).orElseThrow(() -> new NoSuchElementException("User not found"));
+            User userToFollow = userRepository.fetchById(userIdToFollow).orElseThrow(() -> new NoSuchElementException("User to follow not found"));
             validateFollow(userFollowing, userToFollow);
 
             userFollowing.getFollowed().add(userIdToFollow);
@@ -42,7 +42,7 @@ public class UserService implements IUserService {
     @Override
     public void unfollow(int userId, int userIdToUnfollow) {
         User userFollowing = userRepository.fetchById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
-        User userToUnfollow = userRepository.fetchById(userIdToUnfollow).orElseThrow(() -> new NoSuchElementException("User not found"));
+        User userToUnfollow = userRepository.fetchById(userIdToUnfollow).orElseThrow(() -> new NoSuchElementException("User to unfollow not found"));
 
         validateUnfollow(userToUnfollow, userFollowing);
 
