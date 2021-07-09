@@ -65,8 +65,6 @@ public class UserService implements IUserService {
         return new FollowersCountedDTO(userId, user.getName(), numberOfFollowers);
     }
 
-
-
     @Override
     public UserFollowersDTO getFollowers(int userId, String order) {
         User user = getUserById(userId, MSG_USER_NOT_FOUND);
