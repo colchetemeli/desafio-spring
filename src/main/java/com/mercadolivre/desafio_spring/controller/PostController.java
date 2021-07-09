@@ -5,9 +5,11 @@ import com.mercadolivre.desafio_spring.service.IPostsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/products")
-public class PostController implements IPostController{
+public class PostController implements IPostController {
 
     private final IPostsService postsService;
 
@@ -19,7 +21,7 @@ public class PostController implements IPostController{
     //US 0005
     @Override
     @PostMapping("/newpost")
-    public void createPost(@RequestBody PostDTO post) {
+    public void createPost(@Valid @RequestBody PostDTO post) {
         postsService.createPost(post);
     }
 
@@ -33,7 +35,7 @@ public class PostController implements IPostController{
     //US 0010
     @Override
     @PostMapping("/newpromopost")
-    public void createPromoPost(@RequestBody PromoPostDTO post) {
+    public void createPromoPost(@Valid @RequestBody PromoPostDTO post) {
         postsService.createPromoPost(post);
     }
 

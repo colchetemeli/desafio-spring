@@ -71,8 +71,8 @@ public class PostService implements IPostsService {
 
     public List<PostDTO> convertPostToDto(List<Post> postList) {
         return postList.stream()
-                .map(Post::toPostDTO)
                 .filter(p -> p.getDate().after(subtractTwoWeeksFromCurrentDate()))
+                .map(Post::toPostDTO)
                 .collect(Collectors.toList());
     }
 
