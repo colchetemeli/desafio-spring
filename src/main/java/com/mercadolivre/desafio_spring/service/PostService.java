@@ -47,6 +47,7 @@ public class PostService implements IPostsService {
 
     @Override
     public void createPromoPost(PromoPostDTO promoPostDto) {
+        validateIfUserExists(usersRepository.fetchById(promoPostDto.getUserId()));
         this.postRepository.persistPost(promoPostDto.toEntity());
     }
 
@@ -54,6 +55,7 @@ public class PostService implements IPostsService {
     public UserPromosCountedDTO countPromoByUser(int userId) {
         int quantityPromoPosts = this.postRepository.countPromoByUser(userId);
         User user = this.usersRepository.fetchById(userId);
+        validateIfUserExists(user);
         return new UserPromosCountedDTO(user.getId(), user.getName(), quantityPromoPosts);
     }
 
@@ -75,6 +77,7 @@ public class PostService implements IPostsService {
     public List<PostDTO> convertPostToDto(List<Post> postList) {
         return postList.stream()
                 .map(Post::toPostDTO)
+                .filter(p -> p.getDate().after(subtractTwoWeeksFromCurrentDate()))
                 .collect(Collectors.toList());
     }
 
@@ -91,5 +94,11 @@ public class PostService implements IPostsService {
         .map(postRepository::fetchPostsByUser)
         .flatMap(List::stream)
         .collect(Collectors.toList());
+    }
+
+    private Date subtractTwoWeeksFromCurrentDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.WEEK_OF_MONTH, - 2);
+        return calendar.getTime();
     }
 }
