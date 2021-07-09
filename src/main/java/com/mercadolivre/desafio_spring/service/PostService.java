@@ -3,10 +3,8 @@ package com.mercadolivre.desafio_spring.service;
 import com.mercadolivre.desafio_spring.dto.*;
 import com.mercadolivre.desafio_spring.entity.Post;
 import com.mercadolivre.desafio_spring.entity.User;
-import com.mercadolivre.desafio_spring.exceptions.CreatePostException;
 import com.mercadolivre.desafio_spring.repository.IPostRepository;
 import com.mercadolivre.desafio_spring.repository.IUserRepository;
-import com.mercadolivre.desafio_spring.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +26,6 @@ public class PostService implements IPostsService {
 
     @Override
     public void createPost(PostDTO postDto) {
-        validateUser(postDto.getUserId());
         this.postRepository.persistPost(postDto.toEntity());
 
     }
@@ -40,7 +37,6 @@ public class PostService implements IPostsService {
 
     @Override
     public void createPromoPost(PromoPostDTO promoPostDto) {
-        validateUser(promoPostDto.getUserId());
         this.postRepository.persistPost(promoPostDto.toEntity());
     }
 
@@ -68,13 +64,8 @@ public class PostService implements IPostsService {
 
         return orderedPostList.stream()
                 .map(Post::toPostDTO)
+                .filter(p -> p.getDate().after(subtractTwoWeaksFromCurrentDate()))
                 .collect(Collectors.toList());
-    }
-
-    private void validateUser(int userId) {
-        if (Objects.isNull(usersRepository.fetchById(userId))) {
-            throw new CreatePostException("Could not create a new post, this user does not exists!");
-        }
     }
 
     private List<Post> orderList(List<Post> list, String order) {
@@ -85,5 +76,11 @@ public class PostService implements IPostsService {
         }
 
         return list;
+    }
+
+    private Date subtractTwoWeaksFromCurrentDate() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.WEEK_OF_MONTH, - 2);
+        return calendar.getTime();
     }
 }
