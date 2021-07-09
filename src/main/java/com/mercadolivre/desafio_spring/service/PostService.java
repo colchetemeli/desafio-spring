@@ -13,10 +13,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class PostService implements IPostsService {
+    private static final String ASC_ORDERING = "date_asc";
+    private static final String MSG_USER_NOT_FOUND = "User not found";
 
     private final IPostRepository postRepository;
     private final IUserRepository usersRepository;
-    private static final String ASC_ORDERING = "date_asc";
 
     @Autowired
     public PostService(IPostRepository postRepository, IUserRepository userRepository) {
@@ -26,38 +27,38 @@ public class PostService implements IPostsService {
 
     @Override
     public void createPost(PostDTO postDto) {
-        User user = usersRepository.fetchById(postDto.getUserId()).orElseThrow(() -> new NoSuchElementException("User not found"));
+        validateIfUserExists(postDto.getUserId());
         this.postRepository.persistPost(postDto.toEntity());
-
     }
 
     @Override
     public FollowedPostsDTO getFollowedPosts(int userId, String order) {
-        User user = usersRepository.fetchById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
-        return new FollowedPostsDTO(userId, getOrderedPostList(user.getId(), order));
+        validateIfUserExists(userId);
+        return new FollowedPostsDTO(userId, getOrderedPostList(userId, order));
     }
 
     @Override
     public void createPromoPost(PromoPostDTO promoPostDto) {
-        User user = usersRepository.fetchById(promoPostDto.getUserId()).orElseThrow(() -> new NoSuchElementException("User not found"));
+        validateIfUserExists(promoPostDto.getUserId());
         this.postRepository.persistPost(promoPostDto.toEntity());
     }
 
     @Override
     public UserPromosCountedDTO countPromoByUser(int userId) {
+        User user = getUserById(userId);
+
         int quantityPromoPosts = this.postRepository.countPromoByUser(userId);
-        User user = this.usersRepository.fetchById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
         return new UserPromosCountedDTO(user.getId(), user.getName(), quantityPromoPosts);
     }
 
     @Override
     public UserPromosDTO getPromosByUser(int userId) {
+        User user = getUserById(userId);
+
         List<Post> listPosts = orderList(this.postRepository.fetchPromosByUser(userId), "");
         List<PromoPostDTO> promoPostDTOlist = listPosts.stream()
                 .map(Post::toPromoPostDTO)
                 .collect(Collectors.toList());
-
-        User user = this.usersRepository.fetchById(userId).orElseThrow(() -> new NoSuchElementException("User not found"));
 
         return new UserPromosDTO(user.getId(), user.getName(), promoPostDTOlist);
     }
@@ -85,5 +86,13 @@ public class PostService implements IPostsService {
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.WEEK_OF_MONTH, - 2);
         return calendar.getTime();
+    }
+
+    private void validateIfUserExists(Integer userId){
+       getUserById(userId);
+    }
+
+    private User getUserById(Integer userId){
+       return usersRepository.fetchById(userId).orElseThrow(() -> new NoSuchElementException(MSG_USER_NOT_FOUND));
     }
 }
