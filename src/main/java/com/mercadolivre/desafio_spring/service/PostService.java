@@ -69,8 +69,8 @@ public class PostService implements IPostsService {
         List<Post> orderedPostList = orderList(this.postRepository.fetchPostsByUser(userId), order);
 
         return orderedPostList.stream()
-                .map(Post::toPostDTO)
                 .filter(p -> p.getDate().after(subtractTwoWeeksFromCurrentDate()))
+                .map(Post::toPostDTO)
                 .collect(Collectors.toList());
     }
 

@@ -1,6 +1,7 @@
 package com.mercadolivre.desafio_spring.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.mercadolivre.desafio_spring.dto.ProductDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,4 +18,12 @@ public class Product {
     private String color;
     private String notes;
 
+    public ProductDTO toDTO(){
+        return new ProductDTO(this.product_id,
+                                this.productName,
+                                this.type,
+                                this.brand,
+                                this.color,
+                                this.notes);
+    }
 }
