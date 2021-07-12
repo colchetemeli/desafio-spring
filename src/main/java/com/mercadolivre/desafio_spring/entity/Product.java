@@ -5,10 +5,12 @@ import com.mercadolivre.desafio_spring.dto.ProductDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 public class Product {
 
     private int product_id;
@@ -19,11 +21,12 @@ public class Product {
     private String notes;
 
     public ProductDTO toDTO(){
-        return new ProductDTO(this.product_id,
-                                this.productName,
-                                this.type,
-                                this.brand,
-                                this.color,
-                                this.notes);
+        return new ProductDTO()
+                .setId(this.product_id)
+                .setProductName(this.productName)
+                .setType(this.type)
+                .setBrand(this.brand)
+                .setColor(this.color)
+                .setNotes(this.notes);
     }
 }

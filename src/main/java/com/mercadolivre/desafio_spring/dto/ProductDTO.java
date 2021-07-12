@@ -5,6 +5,7 @@ import com.mercadolivre.desafio_spring.entity.Product;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -12,6 +13,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Accessors(chain = true)
 public class ProductDTO {
     @NotNull
     @JsonProperty("product_id")
@@ -25,11 +27,12 @@ public class ProductDTO {
     private String notes;
 
     public Product toEntity() {
-        return new Product(this.id,
-                            this.productName,
-                            this.type,
-                            this.brand,
-                            this.color,
-                            this.notes);
+        return new Product()
+                .setProduct_id(this.id)
+                .setProductName(this.productName)
+                .setType(this.type)
+                .setBrand(this.brand)
+                .setColor(this.color)
+                .setNotes(this.notes);
     }
 }
