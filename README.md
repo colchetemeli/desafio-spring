@@ -29,3 +29,6 @@ Foram implementados completamente os requisitos:
 * US0010
 * US0011
 * US0012
+
+## Versão 1.2.0
+Foram implementadas mensagens de erro no retorno da API, por conta disso alguns retornos de erro podem estar diferentes dos descritos nos requisitos técnicos previamente documentados
