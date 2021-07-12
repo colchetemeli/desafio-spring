@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mercadolivre.desafio_spring.entity.Post;
 import com.mercadolivre.desafio_spring.exception.ConflictException;
+import com.mercadolivre.desafio_spring.exception.PersistenceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -15,6 +16,10 @@ import java.util.stream.Collectors;
 
 @Repository
 public class PostRepository implements IPostRepository{
+
+    private static final String MSG_POST_IN_USE = "This post_id already has been used";
+    private static final String MSG_CREATE_ERROR = "Error to create post";
+    private static final String MSG_LOADING_LIST_ERROR = "Error to get post list";
 
     private static final File FILE = new File("src/main/resources/repository/posts.json");
     private final ObjectMapper mapper;
@@ -28,13 +33,14 @@ public class PostRepository implements IPostRepository{
     public void persistPost(Post post) {
         List<Post> posts = this.getList();
         if ( posts.stream().anyMatch(p -> Objects.equals(p.getId(),post.getId())) ){
-            throw new ConflictException("This post_id already has been used");
+            throw new ConflictException(MSG_POST_IN_USE);
         }
         posts.add(post);
         try {
             mapper.writeValue(FILE, posts);
         } catch (Exception e) {
             e.printStackTrace();
+            throw new PersistenceException(MSG_CREATE_ERROR);
         }
     }
 
@@ -57,17 +63,13 @@ public class PostRepository implements IPostRepository{
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<Post> fetchPromoByUser(int userId) {
-        return null;
-    }
-
     private List<Post> getList(){
         List<Post> posts = new ArrayList<>();
         try {
             posts = mapper.readValue(FILE, new TypeReference<>(){});
         } catch (IOException e) {
             e.printStackTrace();
+            throw new PersistenceException(MSG_LOADING_LIST_ERROR);
         }
         return posts;
     }

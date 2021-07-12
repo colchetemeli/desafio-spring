@@ -20,6 +20,10 @@ public class UserService implements IUserService {
     private static final String MSG_USER_TO_FOLLOW_NOT_FOUND = "User to follow not found";
     private static final String MSG_USER_TO_UNFOLLOW_NOT_FOUND = "User to unfollow not found";
     private static final String MSG_USER_NOT_FOUND = "User not found";
+    private static final String MSG_USER_THE_SAME = "The users are the same";
+    private static final String MSG_USER_ALREADY_FOLLOWING = "The user is already following ";
+    private static final String MSG_USER_NOT_FOLLOW = "The user does not follow ";
+
     private static final String REVERSE_ORDERING = "name_desc";
 
     private final IUserRepository userRepository;
@@ -110,19 +114,19 @@ public class UserService implements IUserService {
 
     private void validateUsersNotEquals(User user1, User user2) {
         if (Objects.equals(user1.getId(), user2.getId())) {
-            throw new ValidateException("The users are the same.");
+            throw new ValidateException(MSG_USER_THE_SAME);
         }
     }
 
     private void validateIfUnfollows(User user, User user2) {
         if (user.getFollowed().contains(user2.getId())) {
-            throw new ValidateException("The user is already following " + user2.getName());
+            throw new ValidateException(MSG_USER_ALREADY_FOLLOWING + user2.getName());
         }
     }
 
     private void validateIfFollows(User userFollowing, User userFollowed) {
         if (!userFollowed.getFollowed().contains(userFollowing.getId())) {
-            throw new ValidateException("The user does not follow " + userFollowed.getName());
+            throw new ValidateException(MSG_USER_NOT_FOLLOW + userFollowed.getName());
         }
     }
 
