@@ -5,7 +5,7 @@ import com.mercadolivre.desafio_spring.dto.UserDTO;
 import com.mercadolivre.desafio_spring.dto.UserFollowedDTO;
 import com.mercadolivre.desafio_spring.dto.UserFollowersDTO;
 import com.mercadolivre.desafio_spring.entity.User;
-import com.mercadolivre.desafio_spring.exception.FollowUnfollowException;
+import com.mercadolivre.desafio_spring.exception.ValidateException;
 import com.mercadolivre.desafio_spring.repository.IUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -110,19 +110,19 @@ public class UserService implements IUserService {
 
     private void validateUsersNotEquals(User user1, User user2) {
         if (Objects.equals(user1.getId(), user2.getId())) {
-            throw new FollowUnfollowException("The users are the same.");
+            throw new ValidateException("The users are the same.");
         }
     }
 
     private void validateIfUnfollows(User user, User user2) {
         if (user.getFollowed().contains(user2.getId())) {
-            throw new FollowUnfollowException("The user is already following " + user2.getName());
+            throw new ValidateException("The user is already following " + user2.getName());
         }
     }
 
     private void validateIfFollows(User userFollowing, User userFollowed) {
         if (!userFollowed.getFollowed().contains(userFollowing.getId())) {
-            throw new FollowUnfollowException("The user does not follow " + userFollowed.getName());
+            throw new ValidateException("The user does not follow " + userFollowed.getName());
         }
     }
 

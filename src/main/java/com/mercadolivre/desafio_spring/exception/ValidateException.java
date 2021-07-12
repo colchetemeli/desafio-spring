@@ -1,14 +1,14 @@
 package com.mercadolivre.desafio_spring.exception;
 
-public class FollowUnfollowException extends RuntimeException {
+public class ValidateException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public FollowUnfollowException() {
+    public ValidateException() {
         super();
     }
 
-    public FollowUnfollowException(String message) {
+    public ValidateException(String message) {
         super(message);
     }
 }

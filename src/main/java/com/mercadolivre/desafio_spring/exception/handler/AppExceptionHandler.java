@@ -2,7 +2,7 @@ package com.mercadolivre.desafio_spring.exception.handler;
 
 import com.mercadolivre.desafio_spring.dto.ErrorMessageDTO;
 import com.mercadolivre.desafio_spring.exception.ConflictException;
-import com.mercadolivre.desafio_spring.exception.FollowUnfollowException;
+import com.mercadolivre.desafio_spring.exception.ValidateException;
 import com.mercadolivre.desafio_spring.exception.PersistenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +19,8 @@ public class AppExceptionHandler {
         return ResponseEntity.internalServerError().body(new ErrorMessageDTO(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
     }
 
-    @ExceptionHandler({FollowUnfollowException.class})
-    public ResponseEntity<ErrorMessageDTO> validateHandler(FollowUnfollowException e){
+    @ExceptionHandler({ValidateException.class})
+    public ResponseEntity<ErrorMessageDTO> validateHandler(ValidateException e){
         return ResponseEntity.badRequest().body(new ErrorMessageDTO(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
     }
 
